@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'InputBox',
+  name: 'Card',
   props: {
     msg: String
   }
