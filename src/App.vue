@@ -1,6 +1,8 @@
 <template>
-  <navbar></navbar>
-  <router-view/>
+  <div class="container mx-auto">
+    <navbar></navbar>
+    <router-view/>
+  </div>
 </template>
 
 <script>
