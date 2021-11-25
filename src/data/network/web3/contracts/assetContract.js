@@ -1,25 +1,28 @@
 /* global BigInt */
-const { ethers } = require("ethers")
+// const { ethers } = require("ethers")
 
-import EthereumClient from '../ethereum/ethereumClient'
+// import EthereumClient from '../ethereum/ethereumClient'
 
-const contractAbi = [
-  // Make a buy order
-  "function buy(uint256 amount, uint256 price) payable",
+import contractAbi from "./abi/Asset.json"
+const contractAddress = "0xe820eC01a88752d4b751327ceadD1cE9ACa32697"
 
-  // Create a standard proposal
-  "function proposePaper(string info) returns (uint256)",
+// const contractAbi = [
+//   // Make a buy order
+//   "function buy(uint256 amount, uint256 price) payable",
 
-  // Vote Yes on a certain proposal
-  "function voteYes(uint256 id)",
+//   // Create a standard proposal
+//   "function proposePaper(string info) returns (uint256)",
 
-  // Vote No on a certain proposal
-  "function voteNo(uint256 id)",
+//   // Vote Yes on a certain proposal
+//   "function voteYes(uint256 id)",
 
-  // Event that is triggered every time an order is filled on the market
-  "event Filled(address indexed sender, address indexed recipient, uint256 indexed price, uint256 amount)"
-]
-const startBlock = 0 // TODO: Inject the actual contract deployment block instead
+//   // Vote No on a certain proposal
+//   "function voteNo(uint256 id)",
+
+//   // Event that is triggered every time an order is filled on the market
+//   "event Filled(address indexed sender, address indexed recipient, uint256 indexed price, uint256 amount)"
+// ]
+// const startBlock = 0 // TODO: Inject the actual contract deployment block instead
 
 /**
  * Asset contract
@@ -27,11 +30,15 @@ const startBlock = 0 // TODO: Inject the actual contract deployment block instea
  */
 class AssetContract {
   constructor(
-    ethereumClient,
-    contractAddress
-  ) {
+    ethereumClient ) {
     this.contract = ethereumClient.getContract(contractAddress, contractAbi)
     this.mutableContract = ethereumClient.getMutableContract(this.contract)
+    // this.getBalanceTokens()
+    console.log(this.contract, this.mutableContract, '------contract')
+  }
+
+  async getBalanceTokens() {
+    // const balance = (await this.contract.balanceOf((await this.provider.getSigners())[0].address)).toString();
   }
 
   /**
@@ -45,13 +52,24 @@ class AssetContract {
 
     let tx = await this.mutableContract
       .proposePaper(
-        info, 
+        info,
         {
           gasLimit: 5000000
         }
       )
 
     return (await tx.wait()).status
+  }
+
+  /**
+   * Make a buy order
+   * @param {number} amount Amount of shares to buy
+  */
+  async sendTokens(amount) {
+    console.log(amount)
+    let tx = await this.contract.lockToken(amount)
+    console.log(tx, '------tx')
+    // return (await tx.wait()).status
   }
 
   /**
@@ -68,7 +86,7 @@ class AssetContract {
 
     let tx = await this.mutableContract
       .buy(
-        amount, 
+        amount,
         price,
         {
           value: BigInt(amount) * BigInt(price),
@@ -90,7 +108,7 @@ class AssetContract {
 
     let tx = await this.mutableContract
       .voteYes(
-        proposalId, 
+        proposalId,
         {
           gasLimit: 5000000
         }
@@ -110,7 +128,7 @@ class AssetContract {
 
     let tx = await this.mutableContract
       .voteNo(
-        proposalId, 
+        proposalId,
         {
           gasLimit: 5000000
         }

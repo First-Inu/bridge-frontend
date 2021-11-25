@@ -2,8 +2,6 @@ import ServiceProvider from '../services/provider'
 import WalletState from '../models/walletState'
 import { MarketOrderType } from '../models/marketOrder'
 import { bigIntMax, bigIntMin } from '../utils/common'
-// import router from '../router/index'
-// import { Vote } from '../models/vote'
 
 const wallet = ServiceProvider.wallet()
 
@@ -18,7 +16,8 @@ function state() {
     },
     interface: {
       alert: null
-    }
+    },
+    provider: null
   }
 }
 
@@ -114,14 +113,47 @@ const getters = {
 
 const actions = {
   async syncWallet(context) {
-    const walletState = await wallet.getState()
+    const { walletState, provider } = await wallet.getState()
     context.commit('setWallet', walletState)
+
+    if (provider) {
+
+      // Subscribe to accounts change
+      provider.on("accountsChanged", async () => {
+        const { walletState } = await wallet.getState()
+        context.commit('setWallet', walletState)
+      });
+
+      // Subscribe to chainId change
+      provider.on("chainChanged", async (chainId) => {
+        console.log(chainId);
+        const { walletState } = await wallet.reconnectWallet()
+        context.commit('setWallet', walletState)
+      });
+
+      // Subscribe to provider connection
+      provider.on("connect", (info) => {
+        console.log(info);
+      });
+
+      // Subscribe to provider disconnection
+      provider.on("disconnect", (error) => {
+        console.log(error);
+      });
+
+      context.commit('setProvider', provider)
+    }
     return walletState
   },
 
   async nonsyncWallet(context) {
     const walletState = await wallet.disconnectWallet()
     context.commit('setWallet', walletState)
+  },
+
+  async sendTokens(context, params) {
+    const amount = params * Math.pow(10, 9)
+    await wallet.sendTokens(amount)
   },
 
   // async refreshOwnedAssetsData(context) {
@@ -273,6 +305,10 @@ const mutations = {
 
   setAlert(state, alert) {
     state.interface.alert = alert
+  },
+
+  setProvider(state, provider) {
+    state.provider = provider
   }
 }
 

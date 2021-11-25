@@ -1,9 +1,9 @@
 <template>
   <div v-if="address != null" class="hidden md:flex items-center">
     <div class="flex items-center rounded bg-gray-100 px-3 py-1">
-      <img class="w-3" v-if="imageUrl !== ''" src="@/assets/icons/eth.svg"/>
+      <img class="w-3" src="@/assets/icons/eth.svg"/>
       <div class="pl-2 text-base text-yellow-500">
-        {{ balance + ' $FLNU' }}
+        {{ balance + ' $FINU' }}
       </div>
     </div>
     <div class="flex items-center rounded bg-gray-100 ml-6">
@@ -26,6 +26,11 @@ export default {
   computed: {
     ...mapGetters({ address: "userWalletAddress", balance: "userEthBalance" }),
   },
+  watch: {
+    balance(newValue) {
+      console.log(newValue)
+    }
+  }
 };
 </script>
 

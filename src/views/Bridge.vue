@@ -1,5 +1,5 @@
 <template>
-  <div  class="container m-auto">
+  <div  class="m-auto">
     <div class="flex-none lg:flex justify-center">
       <swap></swap>
       <img class="lg:max-w-md lg:ml-4 xl:max-w-xl 2xl:max-w-3xl" src="@/assets/images/bridge.svg">

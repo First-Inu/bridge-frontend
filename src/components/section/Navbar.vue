@@ -1,10 +1,10 @@
 <template>
   <nav class="sticky top-0 flex items-center justify-center bg-white">
-    <div class="container flex items-cneter justify-between p-2">
+    <div class="flex items-cneter justify-between w-full p-2">
       <logo></logo>
       <div class="flex items-cneter m-4">
         <wallet-banance></wallet-banance>
-        <div class="relative">
+        <div>
           <div v-if="isLoading" class="absolute w-full h-full">
             <clip-loader class="flex justify-center items-center h-full" :loading="isLoading"></clip-loader>
           </div>
@@ -20,48 +20,17 @@
               shadow-md
               m-2
             "
-            @click="showModal()"
+            @click="connetWallet()"
           >
             {{ address ? "Disconnect Wallet" : "Connect Wallet" }}
           </button>
         </div>
       </div>
     </div>
-    <div
-      v-if="modalShowed"
-      class="flex items-center text-center fixed w-full z-20 text-red-300 mt-40"
-    >
-      <div
-        class="fixed inset-0 transition-opacity"
-        aria-hidden="true"
-        @click="modalShowed = false"
-      >
-        <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-      </div>
-      <div
-        class="
-          flex flex-col
-          items-center
-          Modal-Size
-          rounded-xl
-          shadow-lg
-          overflow-hidden
-          bg-white
-          z-30
-          mx-4
-          sm:mx-auto
-          mt-40
-          p-2
-        "
-      >
-        <connect-button @click="modalShowed = false"></connect-button>
-      </div>
-    </div>
   </nav>
 </template>
 
 <script>
-import ConnectButton from "../global/ConnectButton.vue";
 import Logo from "../global/Logo.vue";
 import WalletBanance from "../global/WalletBanance.vue";
 import ClipLoader from "vue-spinner/src/ClipLoader.vue";
@@ -77,7 +46,7 @@ export default {
       isLoading: false,
     };
   },
-  components: { Logo, WalletBanance, ConnectButton, ClipLoader },
+  components: { Logo, WalletBanance, ClipLoader },
   computed: {
     ...mapGetters({ address: "userWalletAddress", balance: "userEthBalance" }),
   },
@@ -85,7 +54,7 @@ export default {
     this.modalShowed = false;
   },
   methods: {
-    async showModal() {
+    async connetWallet() {
       if (this.address) {
         this.nonsync();
       } else {
@@ -113,9 +82,5 @@ export default {
 <style scoped>
 button:hover {
   box-shadow: 4px 4px 0 #a34ffe;
-}
-.Modal-Size {
-  width: 500px;
-  height: 200px;
 }
 </style>

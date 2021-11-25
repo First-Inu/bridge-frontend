@@ -9,7 +9,7 @@ class ServiceProvider {
    * Creates wallet service.
    * @returns {Wallet} Wallet service
    */
-   static wallet() {
+  static wallet() {
     return new Wallet(
       ethereumClient
     )

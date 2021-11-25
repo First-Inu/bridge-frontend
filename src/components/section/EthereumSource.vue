@@ -24,29 +24,37 @@
     </div>
     <div>
       <div class="mt-5 mb-2 text-yellow-500 text-2xl">
-        {{ "You will send: " + amount_swap + " $FLNU" }}
+        {{ "You will send: " + amount_swap + " $FINU" }}
       </div>
-      <div>$FLNU Current Balance (ERC20):</div>
+      <div>
+        $FINU Current Balance (ERC20):
+        <span class="text-yellow-500"></span>
+      </div>
     </div>
     <div class="flex flex-col items-center">
       <button
         class="
           mt-14
           w-full
-          bg-gray-300
           rounded
           px-4
           py-4
           font-bold
           text-xl text-white
+          focus:outline-none
         "
         :disabled="isBalance()"
         :title="amount_swap ? 'Tansfer token' : 'please input amount'"
-        :class="amount_swap ? '' : 'cursor-not-allowed'"
+        :class="amount_swap ? 'bg-gradient-to-tr from-purple-500 to-purple-700 button-hover' : 'cursor-not-allowed bg-gray-300 hover:shadow-none'"
+        @click="sendToken()"
       >
         Send Tokens
       </button>
-      <a class="hover:text-yellow-500 text-gray-300 pt-6" target="_blank" href="https://app.moontography.com/">
+      <a
+        class="hover:text-yellow-500 text-gray-300 pt-6"
+        target="_blank"
+        href="https://app.moontography.com/"
+      >
         Powered by Moontography
       </a>
     </div>
@@ -55,7 +63,7 @@
 
 <script>
 import Card from "../global/Card.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: { Card },
@@ -79,12 +87,20 @@ export default {
   },
   methods: {
     isBalance() {
-      return !this.balance || this.balance > 0;
+      return !this.balance || this.balance == 0;
     },
+    async sendToken() {
+      let state = await this.sendTokens(this.amount_swap)
+      console.log(state);
+    },
+    ...mapActions(['sendTokens'])
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.button-hover:hover {
+  box-shadow: 4px 4px 0 #ffea51;
+}
 </style>
